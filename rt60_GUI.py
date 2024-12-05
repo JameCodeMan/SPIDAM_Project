@@ -3,6 +3,7 @@ from tkinter import filedialog, messagebox
 from tkinter import ttk
 import numpy as np
 import scipy.signal
+from pydub import AudioSegment
 import soundfile as sf
 import matplotlib.pyplot as plt
 
@@ -35,12 +36,12 @@ class AudioAnalyzerApp:
         self.file_path = None
 
     def load_file(self):
-        """Load an audio file and update the label to show its name."""
         self.file_path = filedialog.askopenfilename(filetypes=[("Audio Files", "*.wav;*.mp3;*.aac")])
         if self.file_path.endswith(".wav"):
             pass
         else:
-            pass
+           return self.convert_audio(self.file_path)
+
         if not self.file_path:
             messagebox.showerror("Error", "No file selected.")
             return
@@ -49,6 +50,16 @@ class AudioAnalyzerApp:
         file_name = self.file_path.split("/")[-1]  # Extract file name
         self.audio_file_label.config(text=f"Selected File: {file_name}")
         messagebox.showinfo("File Loaded", f"Loaded file: {self.file_path}")
+
+    def convert_audio(self,file_path):
+           if file_path:
+              audio = AudioSegment.from_file(file_path)
+              self.output = file_path.rsplit('.',1)[0] + ".wav"
+              audio.export(self.output, format="wav")
+              self.file_path = self.output
+              self.file_name = self.output.split("/")[-1]
+              self.audio_file_label.config(text=f"Selected File: {self.file_name}")
+              messagebox.showinfo("File Loaded", f"Loaded file: {self.output}")
 
     def analyze_audio(self):
         """Placeholder for audio analysis."""
