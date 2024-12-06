@@ -2,10 +2,12 @@ import tkinter as tk
 from tkinter import filedialog, messagebox
 from tkinter import ttk
 import numpy as np
-import scipy.signal
 from pydub import AudioSegment
 import soundfile as sf
+import mutagen
 import matplotlib.pyplot as plt
+from scipy.io import wavfile
+import scipy.io
 
 class AudioAnalyzerApp:
     def __init__(self, master):
@@ -37,6 +39,7 @@ class AudioAnalyzerApp:
 
     def load_file(self):
         self.file_path = filedialog.askopenfilename(filetypes=[("Audio Files", "*.wav;*.mp3;*.aac")])
+            
         if self.file_path.endswith(".wav"):
             pass
         else:
@@ -45,11 +48,26 @@ class AudioAnalyzerApp:
         if not self.file_path:
             messagebox.showerror("Error", "No file selected.")
             return
-        
-        # Update the label with the chosen file name
-        file_name = self.file_path.split("/")[-1]  # Extract file name
+
+        # Update label with the file name
+        file_name = self.file_path.split("/")[-1]
         self.audio_file_label.config(text=f"Selected File: {file_name}")
         messagebox.showinfo("File Loaded", f"Loaded file: {self.file_path}")
+
+        #checks for metadata and removes it
+        meta = mutagen.File(self.file_path)
+        if meta:
+            meta.clear()
+            meta.save()
+        else:
+            pass
+        
+
+    def monochannel(self):
+        wav_fname = AudioSegment.from_file(self.file_path)
+        mono_audio = wav_fname.set_channels(1)
+        mono_audio.export(self.file_path, format = "wav")
+
 
     def convert_audio(self,file_path):
            if file_path:
