@@ -83,6 +83,10 @@ class AudioAnalyzerApp:
     def analyze_audio(self):
 
         samplerate, data = wavfile.read(self.file_path) #Scans audio file
+
+        if len(data.shape) > 1:
+            data = np.mean(data, axis=1).astype(np.int16)
+            
         duration = len(data) / samplerate #Finds duration in seconds
 
         freqs, times, Sxx = spectrogram(data, samplerate) #Sets up spectogram graph
