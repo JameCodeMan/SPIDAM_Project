@@ -10,7 +10,7 @@ class WavObj:
         self.Data=Data
         self.Length=Length
         self.Time=Time
-        #self.spectrum, self.freqs, self.t, self.im = plt.specgram(self.Data, Fs=self.SampRt, NFFT=1024)
+        self.spectrum, self.freqs, self.t, self.im = plt.specgram(self.Data, Fs=self.SampRt, NFFT=1024)
         self.TrgtFreq=0
         self.figcount=1
     
@@ -115,9 +115,8 @@ def main():
     wavfilepath=input("Input the absolute path of your .wav file: ")
     tempSamp, tempData, tempLength, tempTime=WavStat(wavfilepath)
     MyWavObj=WavObj(tempSamp, tempData, tempLength, tempTime)
-    temp=MyWavObj.WavPlt() #Doesn't work with audio that isn't 2-channel, will be fixed soon
-    temp.show()
-    """
+    #temp=MyWavObj.WavPlt() #Doesn't work with audio that isn't 2-channel, will be fixed soon
+    #temp.show()
     temp1=MyWavObj.FreqPlot()
     temp1.show()
     plot, rt60=MyWavObj.RvrbMesr()
@@ -125,6 +124,6 @@ def main():
     print(f"The RT60 reverb time at freq {int(MyWavObj.TrgtFreq)}Hz is {round(abs(rt60), 2)} seconds")
     temp=MyWavObj.FreqAmp()
     temp.show()
-    """
+
 if __name__=="__main__":
     main()
