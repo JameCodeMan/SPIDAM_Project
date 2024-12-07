@@ -96,15 +96,11 @@ class AudioAnalyzerApp:
         freq_lower = freq_min + (freq_max - freq_min) / 3
         freq_upper = freq_min + 2 * (freq_max - freq_min) / 3
 
-        rt60_low = np.mean(Sxx[freqs <= freq_lower])  # Low frequency
-        rt60_mid = np.mean(Sxx[(freqs > freq_lower) & (freqs <= freq_upper)])  # Mid frequency
-        rt60_high = np.mean(Sxx[freqs > freq_upper])  # High frequency
+        low = np.mean(Sxx[freqs <= freq_lower])  # Low frequency
+        mid = np.mean(Sxx[(freqs > freq_lower) & (freqs <= freq_upper)])  # Mid frequency
+        high = np.mean(Sxx[freqs > freq_upper])  # High frequency
 
         max_freq = freqs[np.argmax(Sxx.sum(axis=1))] #Finds maximum frequency
-
-        low = np.mean(Sxx[freqs < 5000]) #Low frequency, below 5000
-        mid = np.mean(Sxx[(freqs >= 5000) & (freqs < 15000)]) #Mid frequency, between 5000 and 15000
-        high = np.mean(Sxx[freqs >= 15000]) #High frequency, above 15000
 
         if not self.file_path:
             messagebox.showerror("Error", "Please load an audio file first.")
