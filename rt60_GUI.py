@@ -80,13 +80,40 @@ class AudioAnalyzerApp:
               messagebox.showinfo("File Loaded", f"Loaded file: {self.output}")
 
     def analyze_audio(self):
-        """Placeholder for audio analysis."""
+
+        samplerate, data = wavfile.read(self.file_path) #Scans audio file
+        duration = len(data) / samplerate #Finds duration in seconds
+
+        freqs, times, Sxx = spectrogram(data, samplerate) #Sets up spectogram graph
+
+        freq_min, freq_max = freqs[0], freqs[-1]
+
+        freq_lower = freq_min + (freq_max - freq_min) / 3
+        freq_upper = freq_min + 2 * (freq_max - freq_min) / 3
+
+        rt60_low = np.mean(Sxx[freqs <= freq_lower])  # Low frequency
+        rt60_mid = np.mean(Sxx[(freqs > freq_lower) & (freqs <= freq_upper)])  # Mid frequency
+        rt60_high = np.mean(Sxx[freqs > freq_upper])  # High frequency
+
+        max_freq = freqs[np.argmax(Sxx.sum(axis=1))] #Finds maximum frequency
+
+        low = np.mean(Sxx[freqs < 5000]) #Low frequency, below 5000
+        mid = np.mean(Sxx[(freqs >= 5000) & (freqs < 15000)]) #Mid frequency, between 5000 and 15000
+        high = np.mean(Sxx[freqs >= 15000]) #High frequency, above 15000
+
         if not self.file_path:
             messagebox.showerror("Error", "Please load an audio file first.")
             return
 
         # Continue with your audio analysis code here
         messagebox.showinfo("Analyze", f"Analyzing: {self.file_path}")
+
+        result = (f"Duration: {duration:.1f} seconds\n" 
+        f"Highest frequency: {max_freq:.1f} Hz\n"
+        f"Low: {low:.1f}\n"
+        f"Mid: {mid:.1f}\n"
+        f"High: {high:.1f}")
+        messagebox.showinfo("Results", result) #Prints results
 
 
 if __name__ == "__main__":
