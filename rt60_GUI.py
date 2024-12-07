@@ -7,6 +7,7 @@ import soundfile as sf
 import mutagen
 import matplotlib.pyplot as plt
 from scipy.io import wavfile
+from scipy.signal import spectrogram
 import scipy.io
 
 class AudioAnalyzerApp:
