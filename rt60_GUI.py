@@ -46,10 +46,13 @@ class AudioAnalyzerApp:
         # Frame for displaying the audio file chosen
         _img_frame = ttk.LabelFrame(master, text='Content', padding='9 0 0 0')
         _img_frame.grid(row=4, column=0, sticky="NSEW", padx=10, pady=5)
+        #Frame to display results
+        _img_frame_results = ttk.LabelFrame(master, text='Results', padding='9 0 0 0')
+        _img_frame_results.grid(row=5, column=0, sticky="NSEW", padx=10, pady=5)
+        #Analysis results label
+        self.results_label = tk.Label(_img_frame_results, text = "Analysis results will be displayed here.", justify = "left",font=("Arial", 10))
+        self.results_label.grid(row=0,column=0,padx=5,pady=5)
         #Frame for displaying graphs
-        self._img_frame_graph = ttk.LabelFrame(master, text='Graph', padding='9 0 0 0')
-        self._img_frame_graph.grid(row=5, column=0, sticky="NSEW", padx=10, pady=5)
-
         self.audio_file_label = tk.Label(_img_frame, text="No file selected", width=50, anchor="w")
         self.audio_file_label.grid(row=0, column=0, padx=5, pady=5)
 
@@ -61,7 +64,7 @@ class AudioAnalyzerApp:
         master.grid_rowconfigure(2, weight=0)
         master.grid_rowconfigure(3, weight=0)
         master.grid_rowconfigure(4, weight=0)
-        master.grid_rowconfigure(5, weight=1, minsize=300)
+        master.grid_rowconfigure(5, weight = 1, minsize = 150)
 
         master.grid_columnconfigure(0, weight=1)
         
@@ -135,38 +138,34 @@ class AudioAnalyzerApp:
             messagebox.showerror("Error", "Please load an audio file first.")
             return
 
-        messagebox.showinfo("Analyze", f"Analyzing: {self.file_path}")
-
         result = (f"Duration: {duration:.1f} seconds\n" 
         f"Highest frequency: {max_freq:.1f} Hz\n"
         f"Low: {low:.1f}\n"
         f"Mid: {mid:.1f}\n"
         f"High: {high:.1f}")
-        messagebox.showinfo("Results", result) #Prints results
+        self.results_label.config(text=result) #Prints results
     def show_graph(self):
         selected_graph = self.clicked.get()
         self.selected_label.config(text=f"Displaying: {selected_graph}")
 
         tempSamp, tempData, tempLength, tempTime = project_functions.WavStat(self.file_path)
         wave = project_functions.WavObj(tempSamp, tempData, tempLength, tempTime)
-        #Embed the graph into tkinter
-        for widget in self._img_frame_graph.winfo_children():
-            widget.destroy()
-        fig, ax = plt.subplots(figsize=(5,4))
 
         if selected_graph == "Waveform":
-            wave.WavPlt(ax=ax)
+            wave.WavPlt()
+        elif selected_graph == "RT60 Low":
+            wave.RvrbMesr(freq_range="low")
+        elif selected_graph == "RT60 Mid":
+            wave.RvrbMesr(freq_range="mid")
+        elif selected_graph == "RT60 High":
+            wave.RvrbMesr(freq_range="high")
         elif selected_graph == "Combined RT60":
-            wave.RvrbMesr(ax=ax)
+            wave.RvrbMesr()
         else:
             return
-
-        canvas = FigureCanvasTkAgg(fig, master= self._img_frame_graph)
-        canvas.draw()
-        canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
     
 if __name__ == "__main__":
     root = tk.Tk()
-    root.geometry("600x700")
+    root.geometry("450x400")
     app = AudioAnalyzerApp(root)
     root.mainloop()
