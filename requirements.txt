@@ -1,0 +1,11 @@
+This Project requires the following libraries to be installed with your Python environment to function:
+-SciPy: https://pypi.org/project/scipy/
+-matplotlib: https://pypi.org/project/matplotlib/
+-numpy: https://pypi.org/project/numpy/
+-tkinter: typically included with Python by default, our app also requires Addons-Tkinter 0.1
+--Addons-Tkinter 0.1: https://pypi.org/project/Addons-Tkinter/
+-pydub: https://pypi.org/project/pydub/
+-soundfile: https://pypi.org/project/soundfile/
+-mutagen: https://pypi.org/project/mutagen/
+
+All links above explain the various methods of installing these packages better than we could
